@@ -11,6 +11,12 @@ import re
 from urllib.parse import urlparse
 
 '''
+Path to store legitimate and phishing web pages
+'''
+write_file = "Phishing Web Page Folder Path"
+legitimate_sites_folder = "Legitimate Web Page Folder Path"
+
+'''
 =======================================    PHASE 3 (FUNCTION 1) BEGINS HERE  =======================================
 In this function, we create an anchor tag with empty content
 <a href="#">
@@ -23,14 +29,7 @@ In this function, we create an anchor tag with empty content
 def function_1(target_file, obtained_soup_here):
     print("Adding feature <a href=\"#\">")
 
-    # legitimate_sites_folder = "\\xampp\\htdocs\\phishingTool\\LegitimatePages\\"
-    # open_this = os.path.join("c:" + legitimate_sites_folder, str(target_file) + ".html")
-
-    # with open(open_this, 'rb') as f_1_input:
-    #     function_1_contents = f_1_input.read()
-    #     f1_soup = BeautifulSoup(function_1_contents, 'lxml')
-    write_file = "\\xampp\\htdocs\\phishingTool\\PhishingSites\\"
-    write_file_name = os.path.join("c:" + write_file, str(target_file) + ".html")
+    write_file_name = os.path.join(write_file, str(target_file) + ".html")
 
     f1_soup = obtained_soup_here
     for el in f1_soup.find_all("a"):
@@ -39,9 +38,6 @@ def function_1(target_file, obtained_soup_here):
         el["onclick"] = ""
 
     function_1_soup = copy.deepcopy(f1_soup.prettify())
-
-    # write_file = "\\xampp\\htdocs\\phishingTool\\PhishingSites\\"
-    # write_file_name = os.path.join("c:" + write_file, str(target_file) + ".html")
 
     with open(write_file_name, 'w', encoding='utf-8') as f_1_output:
         f_1_output.write(str(function_1_soup))
@@ -55,7 +51,7 @@ def function_1(target_file, obtained_soup_here):
 =======================================    PHASE 3 (FUNCTION 2) BEGINS HERE  =======================================
 In this feature, we disable the right click and CTRL options from viewing any source code content
 
-Add attribute 'oncontextmenu="return false;"' in the body tag to disable the right click of the webpage
+Add attribute 'oncontextmenu="return false;"' in the body tag to disable the right click of the webpage.
 If wanted we can add an alert message if right clicked using javascript
 javascript_code_to_append_for_alert = \'''
 <script type="text/javascript"> 
@@ -72,9 +68,8 @@ and in the tag body the attribute should be 'oncontextmenu="return no_right_clic
 
 def function_2(target_file):
     print("Adding feature 'Disabling Right Click, Fn key and CTRL key'")
-
-    legitimate_sites_folder = "\\xampp\\htdocs\\phishingTool\\LegitimateSites\\"
-    open_this = os.path.join("c:" + legitimate_sites_folder, str(target_file) + ".html")
+    
+    open_this = os.path.join(legitimate_sites_folder, str(target_file) + ".html")
 
     # Disabling right click
 
@@ -85,7 +80,6 @@ def function_2(target_file):
         body_tag = f2_soup.body
         body_tag['onkeypress'] = "return disableCtrlKeyCombination(event);"
         body_tag['onkeydown'] = "return disableCtrlKeyCombination(event);"
-        # body_tag['oncontextmenu'] = "return false;"
 
         disable_tag = f2_soup.new_tag('script')
         disable_tag['language'] = "JavaScript"
@@ -164,8 +158,7 @@ return true;
 
     function_2_soup = copy.deepcopy(f2_soup.prettify())
 
-    write_file = "\\xampp\\htdocs\\phishingTool\\PhishingSites\\"
-    write_file_name = os.path.join("c:" + write_file, str(target_file) + ".html")
+    write_file_name = os.path.join(write_file, str(target_file) + ".html")
 
     with open(write_file_name, 'w', encoding='utf-8') as f_2_output:
         f_2_output.write(str(function_2_soup))
@@ -183,17 +176,8 @@ In this feature we add dummy comments
 
 def function_3(target_file, obtained_soup_here):
     print("Adding feature 'Comments'")
-    write_file = "\\xampp\\htdocs\\phishingTool\\PhishingSites\\"
-    write_file_name = os.path.join("c:" + write_file, str(target_file) + ".html")
-    #
-    # with open(write_file_name, 'rb') as f_3_input:
-    #     function_3_contents = f_3_input.read()
-    #     f3_soup = BeautifulSoup(function_3_contents, 'html.parser')
-    # comment_line = '''<b><!-- Comment Here --></b>'''
-    # break_tag = f3_soup.new_tag('br')
-    # break_tag.string = comment_line
-    # # f3_soup.html.body.append(break_tag)
-    # f3_soup.html.body.append(comment_line)
+    
+    write_file_name = os.path.join(write_file, str(target_file) + ".html")
 
     f3_soup = obtained_soup_here
     comment_strings = ['''<b><!-- This code is used to get credentials --></b>''', '''<b><!-- The following code redirects to login page --></b>''', '''<b><!-- Code for adding username and password --></b>''']
@@ -201,9 +185,6 @@ def function_3(target_file, obtained_soup_here):
         comment_line_addition = random.choice(comment_strings)
         f3_soup.html.body.append(BeautifulSoup(comment_line_addition, 'html.parser'))
         f3_soup.prettify()
-
-    # with open(write_file_name, 'a', encoding='utf-8') as f_3_comment:
-    #     f_3_comment.write(comment_line)
 
     '''
     Copy the contents of the downloaded html file soup to another soup using 'copy.deepcopy()' method and create new html file
@@ -229,13 +210,8 @@ Add dummy div tags with visibility:hidden
 def function_4(target_file, obtained_soup_here):
     print("Adding feature 'Dummy div tags'")
 
-    write_file = "\\xampp\\htdocs\\phishingTool\\PhishingSites\\"
-    write_file_name = os.path.join("c:" + write_file, str(target_file) + ".html")
-    #
-    # with open(write_file_name, 'rb') as f_4_input:
-    #     function_4_contents = f_4_input.read()
-    #     f4_soup = BeautifulSoup(function_4_contents, 'html.parser')
-
+    write_file_name = os.path.join(write_file, str(target_file) + ".html")
+ 
     f4_soup = obtained_soup_here
 
     for i in range(0, 10):
@@ -274,12 +250,8 @@ Add dummy script tags in head and body tag
 def function_5(target_file, obtained_soup_here):
     print("Adding feature 'Dummy script tags'")
 
-    write_file = "\\xampp\\htdocs\\phishingTool\\PhishingSites\\"
-    write_file_name = os.path.join("c:" + write_file, str(target_file) + ".html")
-    #
-    # with open(write_file_name, 'rb') as f_5_input:
-    #     function_5_contents = f_5_input.read()
-    #     f5_soup = BeautifulSoup(function_5_contents, 'html.parser')
+    write_file_name = os.path.join(write_file, str(target_file) + ".html")
+
     f5_soup = obtained_soup_here
     script_tags_src = ["myScripts.js", "Scripts.js", "scripts.js", "Scripts/script.js", "scriptFolder/script.js"]
 
@@ -319,12 +291,7 @@ Add dummy link tags in head tag
 def function_6(target_file, obtained_soup_here):
     print("Adding feature 'Dummy link tags'")
 
-    write_file = "\\xampp\\htdocs\\phishingTool\\PhishingSites\\"
-    write_file_name = os.path.join("c:" + write_file, str(target_file) + ".html")
-    #
-    # with open(write_file_name, 'rb') as f_6_input:
-    #     function_6_contents = f_6_input.read()
-    #     f6_soup = BeautifulSoup(function_6_contents, 'html.parser')
+    write_file_name = os.path.join(write_file, str(target_file) + ".html")
 
     f6_soup = obtained_soup_here
     styling_directory = ["style.css", "Styles/styling.css", "styleFolder/styleCSS.css"]
@@ -366,12 +333,7 @@ In this feature we add opacity to the body tag to make it blur
 def function_7(target_file, obtained_soup_here):
     print("Adding feature 'Body opacity'")
 
-    write_file = "\\xampp\\htdocs\\phishingTool\\PhishingSites\\"
-    write_file_name = os.path.join("c:" + write_file, str(target_file) + ".html")
-    #
-    # with open(write_file_name, 'rb') as f_7_input:
-    #     function_7_contents = f_7_input.read()
-    #     f7_soup = BeautifulSoup(function_7_contents, 'html.parser')
+    write_file_name = os.path.join(write_file, str(target_file) + ".html")
 
     f7_soup = obtained_soup_here
     if f7_soup.html.body.has_attr('style'):
@@ -404,12 +366,8 @@ Then, the inputs are saved in a .txt file to mail credentials using send_mail_in
 
 
 def function_8(target_file, obtained_soup_here):
-    write_file = "\\xampp\\htdocs\\phishingTool\\PhishingSites\\"
-    write_file_name = os.path.join("c:" + write_file, str(target_file) + ".html")
-    #
-    # with open(write_file_name, 'rb') as f_8_input:
-    #     function_8_contents = f_8_input.read()
-    #     f8_soup = BeautifulSoup(function_8_contents, 'html.parser')
+   
+    write_file_name = os.path.join(write_file, str(target_file) + ".html")
 
     f8_soup = obtained_soup_here
 
@@ -417,25 +375,14 @@ def function_8(target_file, obtained_soup_here):
         print("Adding feature 'Pop-up Login'")
         for form_element in f8_soup.find_all("form"):
             form_element["action"] = ""
-        # div_tag = soup.form.div
-        # div_tag.decompose()
         [input_tag.extract() for input_tag in f8_soup.findAll('input')]
         [label_tag.clear() for label_tag in f8_soup.findAll('label')]
-        # for input_tag in soup.find_all('input'):
-        #     input_tag['style'] = "background: transparent; border:none;"
-        # soup.find('input').decompose()
-        # for input_tag in soup.find_all('input'):
-        #     input_tag['type'] = "hidden"
-        # soup.find("button")['id'] = "loginButton"
-
-        # pop_up_button = soup.new_tag("button")
+        
         for button_change in f8_soup.find_all('button'):
             button_change['class'] = "_button"
             button_change['href'] = "#"
             button_change['onclick'] = "show('popup')"
-        # soup.html.body.append(pop_up_button)
-
-        # pop_up_div_tag_add = soup.new_tag("div")
+       
         pop_up_div_tag_add_string = '''<div class="popup" id="popup">
                                             <div class="center">
                                                 <div class="container">
@@ -527,12 +474,7 @@ In this feature we add dummy images with visibility:hidden or display:none
 def function_9(target_file, obtained_soup_here):
     print("Adding feature 'Dummy image with no display'")
 
-    write_file = "\\xampp\\htdocs\\phishingTool\\PhishingSites\\"
-    write_file_name = os.path.join("c:" + write_file, str(target_file) + ".html")
-    #
-    # with open(write_file_name, 'rb') as f_9_input:
-    #     function_9_contents = f_9_input.read()
-    #     f9_soup = BeautifulSoup(function_9_contents, 'html.parser')
+    write_file_name = os.path.join(write_file, str(target_file) + ".html")
 
     f9_soup = obtained_soup_here
 
@@ -572,13 +514,9 @@ In this feature we add a set of dummy anchor tags and few redirect to the same w
 
 def function_10(target_file, obtained_soup_here):
     print("Adding feature 'Dummy anchor tags with few of redirecting and few disabled'")
-    write_file = "\\xampp\\htdocs\\phishingTool\\PhishingSites\\"
-    write_file_name = os.path.join("c:" + write_file, str(target_file) + ".html")
-    #
-    # with open(write_file_name, 'rb') as f_10_input:
-    #     function_10_contents = f_10_input.read()
-    #     f10_soup = BeautifulSoup(function_10_contents, 'html.parser')
 
+    write_file_name = os.path.join(write_file, str(target_file) + ".html")
+  
     f10_soup = obtained_soup_here
 
     # Find all the anchor tags in the HTML
@@ -659,31 +597,7 @@ def function_10(target_file, obtained_soup_here):
                                                 ._button:hover {background-color: #473f3f;color: #FFF;border: 3px solid #6a5b5b;transition: all 0.3s ease 0s;}
                                                 p {margin: 1em 0;font-size: 16px;}'''
     f10_soup.html.head.append(style_tag_for_pop_up)
-
-    # # Update the HTML with the changes
-    # new_html = str(f10_soup)
-    #
-    # # Save the updated HTML to a file
-    # with open("updated_html.html", "w") as f:
-    #     f.write(new_html)
-    #
-    # print("Updated HTML saved to updated_html.html")
-    #
-    # for i in range(0, 5):
-    #     disabled_anchor_tags = f10_soup.new_tag("a")
-    #     disabled_anchor_tags['href'] = "#"
-    #     disabled_anchor_tags.string = random.choice(['Find Us', 'Enter Credentials', 'Login for more'])
-    #     # disabled_anchor_tags['style'] = "cursor: not-allowed; pointer-events:none; text-decoration:none;"
-    #     f10_soup.html.body.append(disabled_anchor_tags)
-    #
-    # anchor_tag_strings = ['Reach Us', 'Contact Us', 'Mail Us', 'Login To Know More']
-    # for i in range(0, 5):
-    #     enabled_anchor_tags = f10_soup.new_tag("a")
-    #     enabled_anchor_tags['href'] = target_file
-    #     enabled_anchor_tags.string = random.choice(anchor_tag_strings)
-    #     enabled_anchor_tags['style'] = "text-decoration:none;"
-    #     f10_soup.html.body.append(enabled_anchor_tags)
-
+    
     '''
     Copy the contents of the downloaded html file soup to another soup using 'copy.deepcopy()' method and create new html file
     '''
@@ -707,13 +621,9 @@ In this feature we disable other login buttons if present for login
 
 def function_11(target_file, obtained_soup_here):
     print("Add feature 'Disable other login buttons'")
-    write_file = "\\xampp\\htdocs\\phishingTool\\PhishingSites\\"
-    write_file_name = os.path.join("c:" + write_file, str(target_file) + ".html")
-    #
-    # with open(write_file_name, 'rb') as f_10_input:
-    #     function_10_contents = f_10_input.read()
-    #     f10_soup = BeautifulSoup(function_10_contents, 'html.parser')
-
+ 
+    write_file_name = os.path.join(write_file, str(target_file) + ".html")
+  
     f11_soup = obtained_soup_here
     github_link = f11_soup.find("form", action="https://github.com/login")
     google_link = f11_soup.find("form", action="https://accounts.google.com/login")
@@ -748,8 +658,8 @@ In this feature we find and replace the domain name with look alike characters
 
 def function_12(target_file, obtained_soup_here):
     print("Adding feature 'Look Alike characters'")
-    write_file = "\\xampp\\htdocs\\phishingTool\\PhishingSites\\"
-    write_file_name = os.path.join("c:" + write_file, str(target_file) + ".html")
+
+    write_file_name = os.path.join(write_file, str(target_file) + ".html")
 
     character_a = ['ä', 'ẚ', 'á', 'ầ', 'ā', 'ä']
     character_b = ['b̀', 'b̂', 'b̃', 'ḇ̂', 'b̤', 'b̥']
@@ -785,20 +695,7 @@ def function_12(target_file, obtained_soup_here):
     #     a['href'] = new_href_name
 
     f12_soup = obtained_soup_here
-    # for anchor_tag in f12_soup.find_all('a', href=True):
-    #     href_value = anchor_tag['href']
-    #     alphanumeric_href_value = href_value.isalnum()
-    #     if alphanumeric_href_value:
-    #         char_to_replace = random.choice(href_value)
-    #         replaced_char = ''
-    #         for key in look_alike_characters:
-    #             if key == char_to_replace:
-    #                 replaced_char += look_alike_characters[key]
-    #         new_href_value = replaced_char
-    #         anchor_tag['href'] = new_href_value
-    #     else:
-    #         anchor_tag['href'] = href_value.replace('#', '##')
-
+   
     for anchor_tag in f12_soup.find_all('a', href=True):
         href_value = anchor_tag['href']
         if '#' or 'Javascript' or 'javascript' in href_value:
@@ -828,156 +725,48 @@ def function_12(target_file, obtained_soup_here):
 
 '''
 =======================================    PHASE 3 (FUNCTION 13) BEGINS HERE  =======================================
-In this feature we replace the blank space with <span> or <p> tag with a character in it and visibility: hidden or display:none; functionality
-'''
-
-
-# def function_13(target_file, obtained_soup_here):
-#     import re
-#     import string
-#
-#     print("Adding feature 'Replacing blank space'")
-#     write_file = "\\xampp\\htdocs\\phishingTool\\PhishingSites\\"
-#     write_file_name = os.path.join("c:" + write_file, str(target_file) + ".html")
-#     #
-#     # with open(write_file_name, 'rb') as f_13_input:
-#     #     function_13_contents = f_13_input.read()
-#     #     f13_soup = BeautifulSoup(function_13_contents, 'lxml')
-#
-#     f13_soup = obtained_soup_here
-#
-#     # Find all the text nodes in the HTML
-#     for node in f13_soup.stripped_strings:
-#         # Check if the text node contains blank spaces
-#         if " " in node:
-#             # Replace the blank spaces with a span tag with visibility:hidden style
-#             new_text = node.replace(" ", "<span style='visibility:hidden'>anyText</span>")
-#
-#             # Replace the old text node with the new text in the soup
-#             node.replace_with(new_text)
-#
-#     # # Update the HTML with the changes
-#     # new_html = str(soup)
-#     #
-#     # text_to_replace = f13_soup.get_text()
-#     # print(text_to_replace)
-#     #
-#     # filling_whitespace_string = '''<p style="display:none;">StringHere</p>'''
-#     # text_to_replace.replace(' ', filling_whitespace_string)
-#     # f13_soup.html.body.append(BeautifulSoup(text_to_replace, 'html.parser'))
-#     f13_soup.prettify()
-#     # print("Original Tag:")
-#     # print(tag_to_replace)
-#     # print("Original Tag Content:")
-#     # print(tag_to_replace.text)
-#     # original_text = tag_to_replace.text
-#     # if str(original_text).isspace():
-#     #     new_text = str(original_text).replace(" ", "x")
-#     #     # print("New tag content:")
-#     #     tag_to_replace.string = new_text
-#     # # print(tag_to_replace)
-#
-#     '''
-#     Copy the contents of the downloaded html file soup to another soup using 'copy.deepcopy()' method and create new html file
-#     '''
-#     import copy
-#
-#     function_13_soup = copy.deepcopy(f13_soup.prettify())
-#
-#     with open(write_file_name, 'w', encoding='utf-8') as f_13_output:
-#         f_13_output.write(str(function_13_soup))
-
-
-'''
-========================================    PHASE 3 (FUNCTION 13) ENDS HERE  ========================================
-'''
-
-'''
-=======================================    PHASE 3 (FUNCTION 13) BEGINS HERE  =======================================
-In this feature we add 
-'''
-
-# def function_13(target_file):
-#     print("Adding feature 'about:blank'")
-#     write_file = "\\xampp\\htdocs\\phishingTool\\PhishingSites\\"
-#     write_file_name = os.path.join("c:" + write_file, str(target_file) + ".html")
-#
-#     with open(write_file_name, 'rb') as f_13_input:
-#         function_13_contents = f_13_input.read()
-#         f13_soup = BeautifulSoup(function_13_contents, 'html.parser')
-#         anchor_tag = f13_soup.find('a').find_next_siblings()
-#         anchor_tag['href'] = 'about:blank'
-#         anchor_tag['target'] = '_blank'
-#
-#     '''
-#     Copy the contents of the downloaded html file soup to another soup using 'copy.deepcopy()' method and create new html file
-#     '''
-#     import copy
-#
-#     function_13_soup = copy.deepcopy(f13_soup.prettify())
-#
-#     with open(write_file_name, 'w', encoding='utf-8') as f_13_output:
-#         f_13_output.write(str(function_13_soup))
-
-
-'''
-========================================    PHASE 3 (FUNCTION 13) ENDS HERE  ========================================
-'''
-
-'''
-=======================================    PHASE 3 (FUNCTION 14) BEGINS HERE  =======================================
 In this feature we hide the status bar address link in web browser
 '''
 
 
-def function_14(target_file, obtained_soup_here):
+def function_13(target_file, obtained_soup_here):
     print("Adding feature 'Hide status bar address link'")
-    write_file = "\\xampp\\htdocs\\phishingTool\\PhishingSites\\"
-    write_file_name = os.path.join("c:" + write_file, str(target_file) + ".html")
-    #
-    # with open(write_file_name, 'rb') as f_14_input:
-    #     function_14_contents = f_14_input.read()
-    #     f14_soup = BeautifulSoup(function_14_contents, 'html.parser')
 
-    f14_soup = obtained_soup_here
+    write_file_name = os.path.join(write_file, str(target_file) + ".html")
+   
+    f13_soup = obtained_soup_here
 
-    for anchor_tag in f14_soup.find_all('a'):
+    for anchor_tag in f13_soup.find_all('a'):
         anchor_tag['class'] = "hidelink"
-        # if anchor_tag.has_attr('style'):
-        #     hide_anchor_tag_styles_present = anchor_tag['style']
-        #     hide_anchor_tag_additional_styling = hide_anchor_tag_styles_present + "cursor:pointer; text-decoration:underline;"
-        #     anchor_tag['style'] = hide_anchor_tag_additional_styling
-        # else:
-        #     anchor_tag['style'] = "cursor:pointer; text-decoration:underline;"
-
-    hide_link_style_tag = f14_soup.new_tag('style')
+       
+    hide_link_style_tag = f13_soup.new_tag('style')
     hide_link_style_tag.string = ".hidelink{cursor:pointer; text-decoration:underline;}"
-    f14_soup.html.head.append(hide_link_style_tag)
+    f13_soup.html.head.append(hide_link_style_tag)
 
-    another_hiding_tag = f14_soup.new_tag('script')
+    another_hiding_tag = f13_soup.new_tag('script')
     another_hiding_tag['src'] = "http://code.jquery.com/jquery-1.10.0.min.js"
-    f14_soup.html.head.append(another_hiding_tag)
+    f13_soup.html.head.append(another_hiding_tag)
 
-    hide_address_link_script_tag = f14_soup.new_tag('script')
+    hide_address_link_script_tag = f13_soup.new_tag('script')
     hide_address_link_script_tag.string = "$(function(){$(\"a.hidelink\").each(function (index, element){var href = " \
                                           "$(this).attr(\"href\");$(this).attr(\"hiddenhref\", " \
                                           "href);$(this).removeAttr(\"href\");});$(\"a.hidelink\").click(function(){" \
                                           "url = $(this).attr(\"hiddenhref\");window.open(url, '_blank');})}); "
-    f14_soup.html.head.append(hide_address_link_script_tag)
+    f13_soup.html.head.append(hide_address_link_script_tag)
 
     '''
     Copy the contents of the downloaded html file soup to another soup using 'copy.deepcopy()' method and create new html file
     '''
     import copy
 
-    function_14_soup = copy.deepcopy(f14_soup.prettify())
+    function_13_soup = copy.deepcopy(f13_soup.prettify())
 
-    with open(write_file_name, 'w', encoding='utf-8') as f_14_output:
-        f_14_output.write(str(function_14_soup))
+    with open(write_file_name, 'w', encoding='utf-8') as f_13_output:
+        f_13_output.write(str(function_13_soup))
 
 
 '''
-========================================    PHASE 3 (FUNCTION 14) ENDS HERE  ========================================
+========================================    PHASE 3 (FUNCTION 13) ENDS HERE  ========================================
 '''
 
 '''
@@ -992,12 +781,8 @@ In this feature we change the font family of the text content in the html file
 
 def function_15(target_file, obtained_soup_here):
     print("Adding feature 'Font Family to text content'")
-    write_file = "\\xampp\\htdocs\\phishingTool\\PhishingSites\\"
-    write_file_name = os.path.join("c:" + write_file, str(target_file) + ".html")
-    #
-    # with open(write_file_name, 'rb') as f_15_input:
-    #     function_15_contents = f_15_input.read()
-    #     f15_soup = BeautifulSoup(function_15_contents, 'html.parser')
+
+    write_file_name = os.path.join(write_file, str(target_file) + ".html")
 
     f15_soup = obtained_soup_here
 
@@ -1040,13 +825,9 @@ In this feature we change the border styling in the html file
 
 def function_16(target_file, obtained_soup_here):
     print("Adding feature 'Border Styling'")
-    write_file = "\\xampp\\htdocs\\phishingTool\\PhishingSites\\"
-    write_file_name = os.path.join("c:" + write_file, str(target_file) + ".html")
-    #
-    # with open(write_file_name, 'rb') as f_16_input:
-    #     function_16_contents = f_16_input.read()
-    #     f16_soup = BeautifulSoup(function_16_contents, 'html.parser')
-
+   
+    write_file_name = os.path.join(write_file, str(target_file) + ".html")
+   
     f16_soup = obtained_soup_here
     body_tag = f16_soup.find('body')
     if body_tag.has_attr('style'):
@@ -1087,17 +868,11 @@ In this feature we change the text styling like: align center, capitalize, shado
 
 def function_17(target_file, obtained_soup_here):
     print("Adding feature 'Text Styling'")
-    write_file = "\\xampp\\htdocs\\phishingTool\\PhishingSites\\"
-    write_file_name = os.path.join("c:" + write_file, str(target_file) + ".html")
-    #
-    # with open(write_file_name, 'rb') as f_17_input:
-    #     function_17_contents = f_17_input.read()
-    #     f17_soup = BeautifulSoup(function_17_contents, 'html.parser')
+    
+    write_file_name = os.path.join(write_file, str(target_file) + ".html")
 
     f17_soup = obtained_soup_here
-    # for text_tag in f17_soup.find_all('h2' or 'p' or 'h1'):
-    #     text_tag[
-    #         'style'] = "text-align: center; color: blue; text-transform: capitalize; text-shadow: 1px 1px grey;"
+    
     body_tag = f17_soup.find('body')
     if body_tag.has_attr('style'):
         body_tag_present_style = body_tag['style']
@@ -1138,12 +913,8 @@ In this feature we replace the logo with our image keeping the same dimension as
 
 def function_18(target_file, obtained_soup_here):
     print("Adding feature 'Replace logo image'")
-    write_file = "\\xampp\\htdocs\\phishingTool\\PhishingSites\\"
-    write_file_name = os.path.join("c:" + write_file, str(target_file) + ".html")
-    #
-    # with open(write_file_name, 'rb') as f_18_input:
-    #     function_18_contents = f_18_input.read()
-    #     f18_soup = BeautifulSoup(function_18_contents, 'html.parser')
+
+    write_file_name = os.path.join(write_file, str(target_file) + ".html")
 
     f18_soup = obtained_soup_here
 
@@ -1182,60 +953,21 @@ In this feature we replace the favicon in the html file
 def function_19(target_file, obtained_soup_here):
     print("Adding feature 'Favicon'")
 
-    # '''Download the Favicon from web page'''
-    # icon_link = None
-    # for link in obtained_soup_here.find_all("link", attrs={'rel': re.compile("^(shortcut icon|icon)$", re.I)}):
-    #     icon_link = link.get("href", None)
-    #     break
-    #
-    # if icon_link:
-    #     response = requests.get(icon_link)
-    #     with open("favicon.ico", "wb") as f:
-    #         f.write(response.content)
-    #
-    # else:
-    #     print("Favicon not found")
-
     replacing_parameter = random.choice([0, 1])
     f19_soup = obtained_soup_here
-    write_file = "\\xampp\\htdocs\\phishingTool\\PhishingSites\\"
-    write_file_name = os.path.join("c:" + write_file, str(target_file) + ".html")
+    
+    write_file_name = os.path.join(write_file, str(target_file) + ".html")
 
     if replacing_parameter == 0:
         favicon_images = ['https://ssl.gstatic.com/docs/presentations/images/favicon5.ico',
                           'https://storage.googleapis.com/operating-anagram-8280/apple-touch-icon.png',
                           'https://www.youtube.com/s/desktop/5737b328/img/favicon.ico']
 
-        # with open(write_file_name, 'rb') as f_19_input:
-        #     function_19_contents = f_19_input.read()
-        #     f19_soup = BeautifulSoup(function_19_contents, 'html.parser')
-
         for favicon_item in f19_soup.find_all('link',
                                               attrs={'rel': re.compile("^(shortcut icon|icon)$", re.I)}):
             favicon_item['href'] = random.choice(favicon_images)
 
     if replacing_parameter == 1:
-        # favicon_tag = f19_soup.find_all('link', attrs={'rel': re.compile("^(shortcut icon|icon)$", re.I)})
-        # # favicon_content = requests.get(favicon_tag['href']).content
-        # # with open('favicon.ico', 'wb') as favicon_file_input:
-        # #     favicon_file_input.write(favicon_ontent)c
-        # # favicon_file = open('favicon.ico', 'rb')
-        # # favicon_tag['href'] = favicon_file
-        # icon_link = f19_soup.find_all('link', attrs={'rel': re.compile("^(shortcut icon|icon)$", re.I)})
-        # icon_href_link = icon_link['href']
-        # icon = urllib.request.urlopen(icon_href_link)
-        #
-        # with open('web_page_favicon.png', 'wb') as f:
-        #     f.write(icon.read())
-        #
-        # from PIL import Image
-        # im_rgb = Image.open('web_page_favicon.png')
-        # im_rgba = im_rgb.copy()
-        # im_rgba.putalpha(128)
-        # im_rgba.save('lighter_web_page_favicon.png')
-        #
-        # new_favicon_link = f19_soup.new_tag("link", href="lighter_web_page_favicon.png", rel="icon")
-        # icon_link.replace_with(new_favicon_link)
         favicon_link = f19_soup.find("link", rel="icon") or f19_soup.find("link", rel="shortcut icon")
 
         if favicon_link is not None:
@@ -1282,12 +1014,8 @@ In this feature we add the iFrame in the html file
 
 def function_20(target_file, obtained_soup_here):
     print("Adding feature 'IFrame'")
-    write_file = "\\xampp\\htdocs\\phishingTool\\PhishingSites\\"
-    write_file_name = os.path.join("c:" + write_file, str(target_file) + ".html")
-    #
-    # with open(write_file_name, 'rb') as f_20_input:
-    #     function_20_contents = f_20_input.read()
-    #     f20_soup = BeautifulSoup(function_20_contents, 'lxml')
+  
+    write_file_name = os.path.join(write_file, str(target_file) + ".html")
 
     f20_soup = obtained_soup_here
     iframe_tag = f20_soup.new_tag('iframe')
@@ -1311,40 +1039,6 @@ def function_20(target_file, obtained_soup_here):
 ========================================    PHASE 3 (FUNCTION 20) ENDS HERE  ========================================
 '''
 
-# '''
-# =======================================    PHASE 3 (FUNCTION 21) BEGINS HERE  =======================================
-# In this feature we add line thickness as visual feature in the html file
-# '''
-#
-#
-# def function_21(target_file):
-#     print("Adding feature 'Line Colored Thickness'")
-#     write_file = "\\xampp\\htdocs\\phishingTool\\PhishingSites\\"
-#     write_file_name = os.path.join("c:" + write_file, str(target_file) + ".html")
-#
-#     with open(write_file_name, 'rb') as f_21_input:
-#         function_21_contents = f_21_input.read()
-#         f21_soup = BeautifulSoup(function_21_contents, 'lxml')
-#         hr_tag = f21_soup.new_tag('hr')
-#         hr_tag['style'] = "position:relative; top:20px; border:none; height:12px; background:grey; " \
-#                           "margin-bottom:20px; "
-#         f21_soup.html.body.append(hr_tag)
-#
-#     '''
-#     Copy the contents of the downloaded html file soup to another soup using 'copy.deepcopy()' method and create new html file
-#     '''
-#     import copy
-#
-#     function_21_soup = copy.deepcopy(f21_soup.prettify())
-#
-#     with open(write_file_name, 'w', encoding='utf-8') as f_21_output:
-#         f_21_output.write(str(function_21_soup))
-#
-#
-# '''
-# ========================================    PHASE 3 (FUNCTION 21) ENDS HERE  ========================================
-# '''
-
 '''
 =======================================    PHASE 3 (FUNCTION 22) BEGINS HERE  =======================================
 In this feature we swap the position of form and its siblings in the html file
@@ -1353,8 +1047,8 @@ In this feature we swap the position of form and its siblings in the html file
 
 def function_22(target_file, obtained_soup_here):
     print("Adding feature 'Swap Positions'")
-    write_file = "\\xampp\\htdocs\\phishingTool\\PhishingSites\\"
-    write_file_name = os.path.join("c:" + write_file, str(target_file) + ".html")
+  
+    write_file_name = os.path.join(write_file, str(target_file) + ".html")
 
     f22_soup = obtained_soup_here
 
@@ -1427,55 +1121,21 @@ def add_features_now():
     ========================================================================================================================
     '''
 
-    # n = int(input("Enter the total number of legitimate sites to add phishing features: "))
-    #
-    # target_URL_list = []
-    # for i in range(0, n):
-    #     url = input("Enter URL " + str(i) + ": ")
-    #     target_URL_list.append(url)
-
     target_URL_list = get_URL()
     print(target_URL_list)
     print(len(target_URL_list))
 
-    # print("The target URLs are: " + str(target_URL_list))
-
-    # k = int(input("Enter the total numbers of features to add on the web pages: "))
-    # k = random.randint(9, 15)
+    # get the count of feature to add
     k = get_total_features()
 
     for i in range(len(target_URL_list)):
         length_of_legitimate_URL = len(target_URL_list[i])
         legitimate_URL = target_URL_list[i][:length_of_legitimate_URL - 1]
-        # legitimate_target_URL = target_URL_list[i]
-        # req = urllib.request.Request(legitimate_URL, headers={'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X '
-        #                                                                     '10_9_3) AppleWebKit/537.36 (KHTML, '
-        #                                                                     'like Gecko) Chrome/35.0.1916.47 '
-        #                                                                     'Safari/537.36'})
-        # webURL = urllib.request.urlopen(req)
-
-        # webURL = urllib.request.urlopen(legitimate_URL)
-
-        # import urllib.parse
-        # import urllib.request
-        #
-        # # url = 'http://www.someserver.com/cgi-bin/register.cgi'
-        # user_agent = 'Mozilla/5.0 (Windows NT 6.1; Win64; x64)'
-        # values = {'name': 'Michael Foord',
-        #           'location': 'Northampton',
-        #           'language': 'Python'}
-        # headers = {'User-Agent': user_agent}
-        #
-        # data_reading = urllib.parse.urlencode(values)
-        # data_reading = data_reading.encode('ascii')
-        # req = urllib.request.Request(legitimate_URL, data_reading, headers)
-        # with urllib.request.urlopen(req) as response:
-        #     data = response.read()
 
         import urllib
         req = urllib.request.Request(legitimate_URL)
         req.add_header("Cookie", "example_cookie=value")
-        user_agent_values = "Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.100 Safari/537.36"
+        user_agent_values = "WRITE THE USER AGENT OBTAINED USING THE CODE get_user_agents.py HERE"
         req.add_header("User-Agent", user_agent_values)
         try:
             response = urllib.request.urlopen(req)
@@ -1487,12 +1147,6 @@ def add_features_now():
             continue
         else:
             data = response.read()
-            # print('-----------------------------------------------------------------')
-            # print('The connection code to the web page is: ')
-            # print('The result code is: ', str(webURL.getcode()))
-            #
-            # # time.sleep(5)
-            # data = webURL.read()
 
             '''
             PHASE 2: copy the web page source code to local .html file
@@ -1502,8 +1156,7 @@ def add_features_now():
             Write the content to a file in local to make further modifications
             '''
 
-            legitimate_folder = "\\xampp\\htdocs\\phishingTool\\LegitimateSites\\"
-            file_name = os.path.join("c:" + legitimate_folder, str(i) + ".html")
+            file_name = os.path.join(legitimate_sites_folder, str(i) + ".html")
             with open(file_name, 'wb') as f:
                 f.write(data)
 
@@ -1514,53 +1167,35 @@ def add_features_now():
             webbrowser.open_new_tab(file_name)
 
             target_file_name = i
-            # function_1(target_file_name)
-            #
-            # function_call_list = [function_2, function_4, function_5, function_6, function_7, function_9,
-            #                       function_10, function_11, function_12]
-            #
-            # new_call_list = random.sample(function_call_list, (k - 1))
-            # for j in range(len(new_call_list)):
-            #     new_call_list[j](target_file_name)
 
             functions_to_call = []
             with open(file_name, 'rb') as f_input:
                 contents = f_input.read()
                 soup = BeautifulSoup(contents, 'lxml')
 
-                # total_functions = 14
-                # for function_iterator in range(0, total_functions):
                 if soup.find_all('a'):
-                    # if 'a_href' or 'a_en_dis' or 'a_dis' or 'a_status' or 'a_ff' or 'a_look_alike' not in functions_to_call:
+                    # if 'a_href' or 'a_dis' or 'a_look_alike' not in functions_to_call:
                     functions_to_call.append('a_href_status_ff')
-                    # functions_to_call.append('a_en_dis')
                     functions_to_call.append('a_dis_button')
-                    # functions_to_call.append('a_status')
-                    # functions_to_call.append('a_ff')
                     functions_to_call.append('a_look_alike')
                 if soup.find_all('img'):
                     # if 'img' not in functions_to_call:
-                    # functions_to_call.append('img')
                     functions_to_call.append('logo_img')
                 if soup.find_all('form'):
                     # if 'form' not in functions_to_call:
                     functions_to_call.append('_form_')
-                    # functions_to_call.append('swap_form')
                 if soup.find_all('h1'):
                     # if 'h1' not in functions_to_call:
-                    # functions_to_call.append('h1')
                     functions_to_call.append('h1_text')
                 if soup.find_all('h2'):
                     # if 'h2' not in functions_to_call:
-                    # functions_to_call.append('h2')
                     functions_to_call.append('h2_text')
                 if soup.find_all('p'):
                     # if 'p' not in functions_to_call:
-                    # functions_to_call.append('p')
                     functions_to_call.append('p_text')
             # print(functions_to_call)
 
-            one_out_of_three = [function_1, function_14, function_15]
+            one_out_of_three = [function_1, function_13, function_15]
             all_functions = {'a_href_status_ff': random.choice(one_out_of_three), '_form_': function_8,
                              'a_dis_button': function_11, 'a_look_alike': function_12, 'h1_text': function_17,
                              'h2_text': function_17, 'p_text': function_17,
@@ -1580,48 +1215,21 @@ def add_features_now():
 
             function_2(target_file_name)
             new_call_list = random.sample(new_function_list, (k - 1))
-            # new_call_list.append(function_2)
-
-            # domain_name = urlparse(target_URL_list[i]).netloc.split('.')[0]
-            # generate_Phishing_URL = 'http://' + look_alike_domain(domain_name) + '.com'
-
+          
             domain_name = urlparse(target_URL_list[i]).netloc
 
             set_of_possible_keywords = ['now.info', 'tech.org', 'tech.net', 'systems.org', 'hub.net', 'store.com',
                                         'connect.com', 'search.net']
-            # total_domain_name = domain_name + '.' + random.choice(set_of_possible_keywords)
-
+           
             possible_phishing_url = 'http://' + domain_name + '.' + random.choice(set_of_possible_keywords)
 
             print(possible_phishing_url)
 
-            # Write the functions called to a text file to know which functions are called
-            # with open('function_calls.txt', 'a', encoding='utf-8') as f_functions_called:
-            #     f_functions_called.write(str(legitimate_target_URL) + ", ")
-            #     f_functions_called.write(possible_phishing_url + ', ')
-            #     f_functions_called.write(str(function_2) + ", ")
-            #     for function_called in new_call_list:
-            #         f_functions_called.write(str(function_called) + ", ")
-
-            # with open('phishing_urls_with_http.txt', 'a', encoding='utf-8') as f_phishing_features:
-            #     # f_phishing_features.write(str(legitimate_target_URL) + ', ')
-            #     f_phishing_features.write(possible_phishing_url)
-            #     f_phishing_features.write("\n")
-
             with open('phishing_urls.txt', 'a', encoding='utf-8') as f_phishing_features:
-                # f_phishing_features.write(str(legitimate_target_URL) + ', ')
                 f_phishing_features.write(possible_phishing_url)
                 f_phishing_features.write("\n")
 
-            # function_file = open('function_calls.txt', 'a')
-            # function_file.write(str(target_file_name) + "\n")
-            # function_file.write(str(function_2) + "\n")
-            # for item in new_call_list:
-            #     function_file.write(str(item) + "\n")
-            # function_file.close()
-
-            write_file = "\\xampp\\htdocs\\phishingTool\\PhishingSites\\"
-            write_file_name = os.path.join("c:" + write_file, str(target_file_name) + ".html")
+            write_file_name = os.path.join(write_file, str(target_file_name) + ".html")
 
             with open(write_file_name, 'rb') as file_input:
                 file_contents = file_input.read()
@@ -1639,8 +1247,6 @@ def add_features_now():
                     file_contents_again = file_input_again.read()
                     new_contents_soup = BeautifulSoup(file_contents_again, 'lxml')
                 new_soup = new_contents_soup
-
-            # print(new_call_list)
 
 
 if __name__ == '__main__':
