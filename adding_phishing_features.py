@@ -774,18 +774,61 @@ Visual Similarity-based Features
 '''
 
 '''
-=======================================    PHASE 3 (FUNCTION 15) BEGINS HERE  =======================================
+=======================================    PHASE 3 (FUNCTION 14) BEGINS HERE  =======================================
 In this feature we change the font family of the text content in the html file
 '''
 
 
-def function_15(target_file, obtained_soup_here):
+def function_14(target_file, obtained_soup_here):
     print("Adding feature 'Font Family to text content'")
 
     write_file_name = os.path.join(write_file, str(target_file) + ".html")
 
     f15_soup = obtained_soup_here
 
+    body_tag = f14_soup.find('body')
+    if body_tag.has_attr('style'):
+        body_tag_present_style = body_tag['style']
+        body_tag_additional_styling = body_tag_present_style + "width: 100%;"
+        body_tag['style'] = body_tag_additional_styling
+    else:
+        body_tag['style'] = "width: 100%;"
+
+    for font_tag in f14_soup.find_all('a'):
+        if font_tag.has_attr('style'):
+            font_family_styles_present = font_tag['style']
+            font_family_additional_styling = font_family_styles_present + "font-family:serif; font-style:italic; text-decoration:none;"
+            font_tag['style'] = font_family_additional_styling
+        else:
+            font_tag['style'] = "font-family:serif; font-style:italic; text-decoration:none;"
+
+    '''
+    Copy the contents of the downloaded html file soup to another soup using 'copy.deepcopy()' method and create new html file
+    '''
+    import copy
+
+    function_14_soup = copy.deepcopy(f14_soup.prettify())
+
+    with open(write_file_name, 'w', encoding='utf-8') as f_14_output:
+        f_14_output.write(str(function_14_soup))
+
+
+'''
+========================================    PHASE 3 (FUNCTION 14) ENDS HERE  ========================================
+'''
+
+'''
+=======================================    PHASE 3 (FUNCTION 15) BEGINS HERE  =======================================
+In this feature we change the border styling in the html file
+'''
+
+
+def function_15(target_file, obtained_soup_here):
+    print("Adding feature 'Border Styling'")
+   
+    write_file_name = os.path.join(write_file, str(target_file) + ".html")
+   
+    f15_soup = obtained_soup_here
     body_tag = f15_soup.find('body')
     if body_tag.has_attr('style'):
         body_tag_present_style = body_tag['style']
@@ -794,13 +837,13 @@ def function_15(target_file, obtained_soup_here):
     else:
         body_tag['style'] = "width: 100%;"
 
-    for font_tag in f15_soup.find_all('a'):
-        if font_tag.has_attr('style'):
-            font_family_styles_present = font_tag['style']
-            font_family_additional_styling = font_family_styles_present + "font-family:serif; font-style:italic; text-decoration:none;"
-            font_tag['style'] = font_family_additional_styling
+    for div_tag in f15_soup.find_all('div'):
+        if div_tag.has_attr('style'):
+            div_tag_styles_present = div_tag['style']
+            div_tag_additional_styling = div_tag_styles_present + "border-width: 2px; border-color: grey;"
+            div_tag['style'] = div_tag_additional_styling
         else:
-            font_tag['style'] = "font-family:serif; font-style:italic; text-decoration:none;"
+            div_tag['style'] = "border-width: 2px; border-color: grey;"
 
     '''
     Copy the contents of the downloaded html file soup to another soup using 'copy.deepcopy()' method and create new html file
@@ -819,16 +862,17 @@ def function_15(target_file, obtained_soup_here):
 
 '''
 =======================================    PHASE 3 (FUNCTION 16) BEGINS HERE  =======================================
-In this feature we change the border styling in the html file
+In this feature we change the text styling like: align center, capitalize, shadow, ... in the html file
 '''
 
 
 def function_16(target_file, obtained_soup_here):
-    print("Adding feature 'Border Styling'")
-   
+    print("Adding feature 'Text Styling'")
+    
     write_file_name = os.path.join(write_file, str(target_file) + ".html")
-   
+
     f16_soup = obtained_soup_here
+    
     body_tag = f16_soup.find('body')
     if body_tag.has_attr('style'):
         body_tag_present_style = body_tag['style']
@@ -837,13 +881,14 @@ def function_16(target_file, obtained_soup_here):
     else:
         body_tag['style'] = "width: 100%;"
 
-    for div_tag in f16_soup.find_all('div'):
-        if div_tag.has_attr('style'):
-            div_tag_styles_present = div_tag['style']
-            div_tag_additional_styling = div_tag_styles_present + "border-width: 2px; border-color: grey;"
-            div_tag['style'] = div_tag_additional_styling
+    for text_tag in f16_soup.find_all('h2' or 'p' or 'h1'):
+        if text_tag.has_attr('style'):
+            text_tag_present_style = text_tag['style']
+            text_tag_additional_styling = text_tag_present_style + "text-align: center; color: #4A667E; text-transform: capitalize; text-shadow: 1px 1px grey;"
+            text_tag['style'] = text_tag_additional_styling
         else:
-            div_tag['style'] = "border-width: 2px; border-color: grey;"
+            text_tag['style'] = "text-align: center; color: #4A667E; text-transform: capitalize; text-shadow: 1px 1px grey;"
+
 
     '''
     Copy the contents of the downloaded html file soup to another soup using 'copy.deepcopy()' method and create new html file
@@ -862,33 +907,24 @@ def function_16(target_file, obtained_soup_here):
 
 '''
 =======================================    PHASE 3 (FUNCTION 17) BEGINS HERE  =======================================
-In this feature we change the text styling like: align center, capitalize, shadow, ... in the html file
+In this feature we replace the logo with our image keeping the same dimension as specified by developer in the html file
 '''
 
 
 def function_17(target_file, obtained_soup_here):
-    print("Adding feature 'Text Styling'")
-    
+    print("Adding feature 'Replace logo image'")
+
     write_file_name = os.path.join(write_file, str(target_file) + ".html")
 
     f17_soup = obtained_soup_here
-    
-    body_tag = f17_soup.find('body')
-    if body_tag.has_attr('style'):
-        body_tag_present_style = body_tag['style']
-        body_tag_additional_styling = body_tag_present_style + "width: 100%;"
-        body_tag['style'] = body_tag_additional_styling
-    else:
-        body_tag['style'] = "width: 100%;"
 
-    for text_tag in f17_soup.find_all('h2' or 'p' or 'h1'):
-        if text_tag.has_attr('style'):
-            text_tag_present_style = text_tag['style']
-            text_tag_additional_styling = text_tag_present_style + "text-align: center; color: #4A667E; text-transform: capitalize; text-shadow: 1px 1px grey;"
-            text_tag['style'] = text_tag_additional_styling
+    for img_tag in f17_soup.find_all('img'):
+        if img_tag.has_attr('style'):
+            img_tag_present_style = img_tag['style']
+            img_tag_additional_styling = img_tag_present_style + "opacity:0.7;"
+            img_tag['style'] = img_tag_additional_styling
         else:
-            text_tag['style'] = "text-align: center; color: #4A667E; text-transform: capitalize; text-shadow: 1px 1px grey;"
-
+            img_tag['style'] = "opacity:0.7;"
 
     '''
     Copy the contents of the downloaded html file soup to another soup using 'copy.deepcopy()' method and create new html file
@@ -903,42 +939,6 @@ def function_17(target_file, obtained_soup_here):
 
 '''
 ========================================    PHASE 3 (FUNCTION 17) ENDS HERE  ========================================
-'''
-
-'''
-=======================================    PHASE 3 (FUNCTION 18) BEGINS HERE  =======================================
-In this feature we replace the logo with our image keeping the same dimension as specified by developer in the html file
-'''
-
-
-def function_18(target_file, obtained_soup_here):
-    print("Adding feature 'Replace logo image'")
-
-    write_file_name = os.path.join(write_file, str(target_file) + ".html")
-
-    f18_soup = obtained_soup_here
-
-    for img_tag in f18_soup.find_all('img'):
-        if img_tag.has_attr('style'):
-            img_tag_present_style = img_tag['style']
-            img_tag_additional_styling = img_tag_present_style + "opacity:0.7;"
-            img_tag['style'] = img_tag_additional_styling
-        else:
-            img_tag['style'] = "opacity:0.7;"
-
-    '''
-    Copy the contents of the downloaded html file soup to another soup using 'copy.deepcopy()' method and create new html file
-    '''
-    import copy
-
-    function_18_soup = copy.deepcopy(f18_soup.prettify())
-
-    with open(write_file_name, 'w', encoding='utf-8') as f_18_output:
-        f_18_output.write(str(function_18_soup))
-
-
-'''
-========================================    PHASE 3 (FUNCTION 18) ENDS HERE  ========================================
 '''
 
 '''
