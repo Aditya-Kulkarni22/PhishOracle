@@ -51,6 +51,10 @@ http_https = r"https://|http://"
 -1 is phishing
 '''
 
+write_file = "\\xampp\\htdocs\\phishingTool\\PhishingSites\\"
+legitimate_features_file_path = "Path to CSV file to write legitimate features"
+legitimate_urls_file = "Path to file containing legitimate URLs"
+
 
 def having_ip_address(url):
     try:
@@ -192,8 +196,6 @@ def URL_of_Anchor(soup, url, domain):
     i = 0
     unsafe = 0
     for a in soup.find_all('a', href=True):
-        # 2nd condition was 'JavaScript ::void(0)' but we put JavaScript because the space between javascript and
-        # :: might not be there in the actual a['href']
         if "#" in a['href'] or "javascript" in a['href'].lower() or "mailto" in a['href'].lower() or not (
                 url in a['href'] or domain in a['href']):
             unsafe = unsafe + 1
@@ -294,22 +296,21 @@ def domain_age(domain_name):
 
 
 def DNSRecording(domain_name_dns):
-    # try:
-    #     creation_date = whois.whois(domain_name_dns).creation_date
-    #     try:
-    #         if len(creation_date):
-    #             creation_date = creation_date[0]
-    #     except:
-    #         pass
-    #
-    #     today = date.today()
-    #     age = (today.year - creation_date.year) * 12 + (today.month - creation_date.month)
-    #     if age >= 6:
-    #         return 0
-    #     return 1
-    # except:
-    #     return 1
-    return 1
+    try:
+        creation_date = whois.whois(domain_name_dns).creation_date
+        try:
+            if len(creation_date):
+                creation_date = creation_date[0]
+        except:
+            pass
+    
+        today = date.today()
+        age = (today.year - creation_date.year) * 12 + (today.month - creation_date.month)
+        if age >= 6:
+            return 0
+        return 1
+    except:
+        return 1
 
 
 def web_traffic(url):
@@ -340,10 +341,6 @@ def google_index(url):
 
 # links pointing to page
 def links_pointing_to_page(soup):
-    # response = requests.get(url)
-    # if response == "":
-    #     return -1
-    # else:
     number_of_links = 0
     if re.findall(r"<a href=", str(soup)):
         number_of_links += 1
@@ -379,54 +376,24 @@ def statistical_report(url, domain):
         print('Connection problem. Please check your internet connection')
 
 
-# result
-
-# def number_of_dots(domain_name_here):
-#     count_of_dots = len(re.findall("\.", domain_name_here))
-#     return (count_of_dots - 1) if count_of_dots >= 2 else 0
-#
-#
-# def web_forwards():
-#     return 1
-#
-#
-# def web_forward(url):
-#     try:
-#         return 0 if len(requests.get(url).history) <= 1 else 1
-#     except:
-#         return 1
-
-
 def get_hostname_from_url(url):
-    # hostname = url
-    # pattern = "https://|http://|www.|https://www.|http://www."
-    # pre_pattern_match = re.search(pattern, hostname)
-    #
-    # if pre_pattern_match:
-    #     hostname = hostname[pre_pattern_match.end():]
-    #     post_pattern_match = re.search("/", hostname)
-    #     if post_pattern_match:
-    #         hostname = hostname[:post_pattern_match.start()]
-    #
-    # return hostname
     parsed_url = urlparse(url)
     obtained_domain_name = parsed_url.netloc
     return obtained_domain_name
 
 
 def get_URL():
-    with open('URLs.txt', 'r', encoding='utf-8') as f_input:
+    with open(legitimate_urls_file, 'r', encoding='utf-8') as f_input:
         URL_List_Contents = f_input.readlines()
         my_obtained_phishing_URLs = []
 
         for URL in range(len(URL_List_Contents)):
-            # print(URL_List_Contents[URL])
             my_obtained_phishing_URLs.append(URL)
     return URL_List_Contents
 
 
 def write_heading_to_csv_file():
-    with open('legitimate_features.csv', 'w', encoding='utf-8', newline='') as file:
+    with open(legitimate_features_file_path, 'w', encoding='utf-8', newline='') as file:
         writer = csv.writer(file)
 
         writer.writerow(
@@ -439,7 +406,7 @@ def write_heading_to_csv_file():
 
 
 def write_features_values_to_csv_file(feature_set_list):
-    with open('legitimate_features.csv', 'a', encoding='utf-8', newline='') as f_features:
+    with open(legitimate_features_file_path, 'a', encoding='utf-8', newline='') as f_features:
         writer = csv.writer(f_features)
 
         writer.writerow(feature_set_list)
@@ -456,12 +423,8 @@ def extract_all_features_from_url_and_content():
         print(get_generated_URL[i])
         legitimate_URL_length = len(get_generated_URL[i])
         legitimate_URL = get_generated_URL[i][:legitimate_URL_length - 1]
-        # final_feature_values.append(phishing_URL)
         domain_name_of_legitimate_url = get_hostname_from_url(legitimate_URL)
         print(domain_name_of_legitimate_url)
-
-        # print("Index value")
-        # final_feature_values.append(i+1)
 
         print("-----------------------DONE-----------------------------")
         print("Having IP address")
@@ -521,8 +484,7 @@ def extract_all_features_from_url_and_content():
 
         print("-----------------------DONE-----------------------------")
         print("Favicon")
-        write_file = "\\xampp\\htdocs\\phishingTool\\LegitimateSites\\"
-        write_file_name = os.path.join("c:" + write_file, str(i) + ".html")
+        write_file_name = os.path.join(write_file, str(i) + ".html")
         with open(write_file_name, 'rb') as f_input:
             contents = f_input.read()
             soup = BeautifulSoup(contents, 'html.parser')
@@ -544,8 +506,7 @@ def extract_all_features_from_url_and_content():
 
         print("-----------------------DONE-----------------------------")
         print("Request URL")
-        write_file = "\\xampp\\htdocs\\phishingTool\\LegitimateSites\\"
-        write_file_name = os.path.join("c:" + write_file, str(i) + ".html")
+        write_file_name = os.path.join(write_file, str(i) + ".html")
         with open(write_file_name, 'rb') as f_input:
             contents = f_input.read()
             soup = BeautifulSoup(contents, 'html.parser')
@@ -555,8 +516,7 @@ def extract_all_features_from_url_and_content():
 
         print("-----------------------DONE-----------------------------")
         print("URL in Anchor")
-        write_file = "\\xampp\\htdocs\\phishingTool\\LegitimateSites\\"
-        write_file_name = os.path.join("c:" + write_file, str(i) + ".html")
+        write_file_name = os.path.join(write_file, str(i) + ".html")
         with open(write_file_name, 'rb') as f_input:
             contents = f_input.read()
             soup = BeautifulSoup(contents, 'html.parser')
@@ -566,8 +526,7 @@ def extract_all_features_from_url_and_content():
 
         print("-----------------------DONE-----------------------------")
         print("Links in Tag")
-        write_file = "\\xampp\\htdocs\\phishingTool\\LegitimateSites\\"
-        write_file_name = os.path.join("c:" + write_file, str(i) + ".html")
+        write_file_name = os.path.join(write_file, str(i) + ".html")
         with open(write_file_name, 'rb') as f_input:
             contents = f_input.read()
             soup = BeautifulSoup(contents, 'html.parser')
@@ -577,8 +536,7 @@ def extract_all_features_from_url_and_content():
 
         print("-----------------------DONE-----------------------------")
         print("SFH")
-        write_file = "\\xampp\\htdocs\\phishingTool\\LegitimateSites\\"
-        write_file_name = os.path.join("c:" + write_file, str(i) + ".html")
+        write_file_name = os.path.join(write_file, str(i) + ".html")
         with open(write_file_name, 'rb') as f_input:
             contents = f_input.read()
             soup = BeautifulSoup(contents, 'html.parser')
@@ -595,21 +553,18 @@ def extract_all_features_from_url_and_content():
         print("-----------------------DONE-----------------------------")
         print("Abnormal URL")
         abnormal_url_flag = abnormal_URL(legitimate_URL)
-        # abnormal_url_flag = 1
         print(abnormal_url_flag)
         final_feature_values.append(abnormal_url_flag)
 
         print("-----------------------DONE-----------------------------")
         print("Redirect")
         redirect_in_url = redirect(legitimate_URL)
-        # redirect_in_url = random.choice([1, -1])
         print(redirect_in_url)
         final_feature_values.append(redirect_in_url)
 
         print("----------------------------------------------------")
         print("Hide Status Bar")
-        write_file = "\\xampp\\htdocs\\phishingTool\\LegitimateSites\\"
-        write_file_name = os.path.join("c:" + write_file, str(i) + ".html")
+        write_file_name = os.path.join(write_file, str(i) + ".html")
         with open(write_file_name, 'rb') as f_input:
             contents = f_input.read()
             soup = BeautifulSoup(contents, 'html.parser')
@@ -619,8 +574,7 @@ def extract_all_features_from_url_and_content():
 
         print("----------------------------------------------------")
         print("Disabled right click")
-        write_file = "\\xampp\\htdocs\\phishingTool\\LegitimateSites\\"
-        write_file_name = os.path.join("c:" + write_file, str(i) + ".html")
+        write_file_name = os.path.join(write_file, str(i) + ".html")
         with open(write_file_name, 'rb') as f_input:
             contents = f_input.read()
             soup = BeautifulSoup(contents, 'html.parser')
@@ -630,8 +584,7 @@ def extract_all_features_from_url_and_content():
 
         print("----------------------------------------------------")
         print("Popup presence")
-        write_file = "\\xampp\\htdocs\\phishingTool\\LegitimateSites\\"
-        write_file_name = os.path.join("c:" + write_file, str(i) + ".html")
+        write_file_name = os.path.join(write_file, str(i) + ".html")
 
         with open(write_file_name, 'rb') as f_input:
             contents = f_input.read()
@@ -641,9 +594,8 @@ def extract_all_features_from_url_and_content():
         final_feature_values.append(pop_up_presence)
 
         print("-----------------------DONE-----------------------------")
-        print("IFrame presence")
-        write_file = "\\xampp\\htdocs\\phishingTool\\LegitimateSites\\"
-        write_file_name = os.path.join("c:" + write_file, str(i) + ".html")
+        print("IFrame presence
+        write_file_name = os.path.join(write_file, str(i) + ".html")
 
         with open(write_file_name, 'rb') as f_input:
             contents = f_input.read()
@@ -684,8 +636,8 @@ def extract_all_features_from_url_and_content():
 
         print("-----------------------DONE-----------------------------")
         print("Links pointing in page")
-        write_file = "\\xampp\\htdocs\\phishingTool\\PhishingSites\\"
-        write_file_name = os.path.join("c:" + write_file, str(i) + ".html")
+       
+        write_file_name = os.path.join(write_file, str(i) + ".html")
 
         with open(write_file_name, 'rb') as f_input:
             contents = f_input.read()
@@ -697,53 +649,11 @@ def extract_all_features_from_url_and_content():
         print("-----------------------DONE-----------------------------")
         print("Statistical Report")
         statistical_report_value = statistical_report(legitimate_URL, domain_name_of_legitimate_url)
-        # statistical_report_value = random.choice([-1, 1])
         print(statistical_report_value)
         final_feature_values.append(statistical_report_value)
 
-        # print("-----------------------DONE-----------------------------")
-        # print("Number of Dots (Sub Domains)")
-        # url_with_number_of_dots = number_of_dots(domain_name_of_phishing_url)
-        # # print(domain_name_of_phishing_url)
-        # print(url_with_number_of_dots)
-        # final_feature_values.append(url_with_number_of_dots)
-
-        # print("----------------------------------------------------")
-        # print("DNS Record")
-        # webURL = urllib.request.urlopen(phishing_URL)
-        # existence_code = webURL.getcode()
-        # if existence_code == 200:
-        #     final_feature_values.append(1)
-        # else:
-        #     final_feature_values.append(0)
-
-        # pick_any = [0, 1]
-        # url_with_domain_age = random.choice(pick_any)
-        # print(url_with_domain_age)
-        # final_feature_values.append(url_with_domain_age)
-
-        # print("-----------------------DONE-----------------------------")
-        # print("Domain End")
-        # pick_any = [0, 1]
-        # # url_with_domain_end = 1 if url_with_domain_age == 1 else random.choice(pick_any)
-        # if url_with_domain_age == 0:
-        #     url_with_domain_end = 0
-        #     print(url_with_domain_end)
-        #     final_feature_values.append(url_with_domain_end)
-        # else:
-        #     url_with_domain_end = 1
-        #     print(url_with_domain_end)
-        #     final_feature_values.append(url_with_domain_end)
-        #
-        # print("----------------------------------------------------")
-        # print("Webpage Forwarding")
-        # url_with_web_forward = web_forward(phishing_URL)
-        # print(url_with_web_forward)
-        # final_feature_values.append(url_with_web_forward)
-
         print("----------------------------------------------------")
         print("For Label we mark legitimate as we assume that it was hosted")
-        print(1)
         final_feature_values.append(1)
         print(final_feature_values)
 
