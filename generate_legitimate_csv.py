@@ -51,7 +51,7 @@ http_https = r"https://|http://"
 -1 is phishing
 '''
 
-write_file = "\\xampp\\htdocs\\phishingTool\\PhishingSites\\"
+write_file = "Path to saved Legitimate web pages"
 legitimate_features_file_path = "Path to CSV file to write legitimate features"
 legitimate_urls_file = "Path to file containing legitimate URLs"
 
@@ -111,12 +111,26 @@ def having_sub_domain(url):
 
 # SSLfinal_state
 def SSL_final_state(url):
-    return 1
+    return 1 if requests.get(url).text else -1
 
 
 # Domain_registration_length
 def Domain_registration_length(url):
-    return 1
+    w = whois.whois(url)
+    expiration_date = w.expiration_date
+    try:
+        registration_length = 0
+        expiration_date = min(expiration_date)
+        today = time.strftime('%Y-%m-%d')
+        today = datetime.strptime(today, '%Y-%m-%d')
+        registration_length = abs((expiration_date - today).days)
+
+        if registration_length / 365 <= 1:
+            return -1
+        else:
+            return 1
+    except:
+        return -1
 
 
 # Favicon
@@ -266,12 +280,28 @@ def submit_to_email(url):
 
 # Abnormal URL
 def abnormal_URL(url):
-    return 1
+    response = requests.get(url)
+        if response == "":
+            return -1
+        else:
+            if response.text == whois.get(url):
+                return 1
+            else:
+                return -1
 
 
 # Redirect
 def redirect(url):
-    return 1
+    response = requests.get(url)
+    if response == "":
+        return -1
+    else:
+        if len(response.history) <= 1:
+            return -1
+        elif len(response.history) <= 4:
+            return 0
+        else:
+            return 1
 
 
 def hide_status_bar_mouseover(soup):
@@ -292,7 +322,22 @@ def i_frame(soup):
 
 
 def domain_age(domain_name):
-    return 1
+    try:
+        whois_response = whois.whois(domain_name)
+        creation_date = whois_response.creation_date
+        try:
+            if len(creation_date):
+                creation_date = creation_date[0]
+        except:
+            pass
+
+        today_date = date.today()
+        age = (today_date.year - creation_date.year) * 12 + (today_date.month - creation_date.month)
+        if age >= 6:
+            return -1
+        return 1
+    except:
+        return 1
 
 
 def DNSRecording(domain_name_dns):
@@ -314,7 +359,12 @@ def DNSRecording(domain_name_dns):
 
 
 def web_traffic(url):
-    return 1
+    try:
+        rank = BeautifulSoup(urllib.request.urlopen("http://data.alexa.com/data?cli=10&dat=s&url=" + url).read(),
+                             "xml").find("REACH")['RANK']
+        return 1 if int(rank) < 100000 else 0
+    except:
+        return -1
 
 
 # page rank
@@ -373,7 +423,7 @@ def statistical_report(url, domain):
         else:
             return 1
     except:
-        print('Connection problem. Please check your internet connection')
+        print('Could not connect')
 
 
 def get_hostname_from_url(url):
@@ -385,10 +435,10 @@ def get_hostname_from_url(url):
 def get_URL():
     with open(legitimate_urls_file, 'r', encoding='utf-8') as f_input:
         URL_List_Contents = f_input.readlines()
-        my_obtained_phishing_URLs = []
+        my_obtained_legitimate_URLs = []
 
         for URL in range(len(URL_List_Contents)):
-            my_obtained_phishing_URLs.append(URL)
+            my_obtained_legitimate_URLs.append(URL)
     return URL_List_Contents
 
 
@@ -471,14 +521,12 @@ def extract_all_features_from_url_and_content():
         print("-----------------------DONE-----------------------------")
         print("URL SSL Final State")
         ssl_final_state = SSL_final_state(legitimate_URL)
-        # ssl_final_state = 1
         print(ssl_final_state)
         final_feature_values.append(ssl_final_state)
 
         print("-----------------------DONE-----------------------------")
         print("Domain Registration Length")
         domain_registration = Domain_registration_length(legitimate_URL)
-        # domain_registration = 1
         print(domain_registration)
         final_feature_values.append(domain_registration)
 
